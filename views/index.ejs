@@ -114,7 +114,7 @@
         msgdiv.scrollTop = msgdiv.scrollHeight;
       });
 
-      window.addEventListener("beforeunload", (evt) => {
+      window.addEventListener("pagehide", (evt) => {
         if (username != "Unknown") socket.emit("user left", username);
       });
 
