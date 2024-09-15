@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PrivyTalk</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .messages::-webkit-scrollbar {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="flex min-h-screen bg-zinc-800 text-white items-center justify-center p-5 flex-col gap-2"
+    >
+      <div id="username">
+        <h3 class="my-3 text-center font-semibold text-lg">Enter your name</h3>
+        <form>
+          <input
+            type="text"
+            class="rounded-md outline-none bg-transparent border-2 border-zinc-600 px-3 py-2"
+            placeholder="Enter your name here"
+            required
+          />
+          <button class="rounded-md bg-blue-500 px-3 py-2">Enter</button>
+        </form>
+      </div>
+      <div
+        id="chat"
+        class="h-[80vh] border-2 border-zinc-600 rounded-md lg:w-1/2 sm:w-3/4 w-full flex flex-col justify-between hidden"
+      >
+        <div class="messages overflow-auto p-5 flex flex-col w-full"></div>
+        <form
+          action=""
+          class="msgform border-2 border-zinc-600 rounded-md px-2 py-1 flex gap-2"
+        >
+          <input
+            type="text"
+            placeholder="Enter your message..."
+            class="bg-transparent outline-none flex-1"
+            required
+          />
+          <button class="px-3 py-2 rounded-md bg-green-500 text-black">
+            Send
+          </button>
+        </form>
+      </div>
+      <div
+        class="users p-2 border-2 border-zinc-600 lg:h-[80%] lg:w-1/4 w-full sm:w-3/4 lg:absolute left-0 rounded-md overflow-y-auto hidden"
+      >
+        <h3 class="text-center text-green-500 text-lg my-2">Online Users</h3>
+        <div class="usersMain"></div>
+      </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+      const usernameDiv = document.querySelector("#username");
+      const chatDiv = document.querySelector("#chat");
+      const msgdiv = document.querySelector(".messages");
+      const usersDiv = document.querySelector(".usersMain");
+      let username = "Unknown";
+      document
+        .querySelector("#username form")
+        .addEventListener("submit", (evt) => {
+          evt.preventDefault();
+          usernameDiv.classList.add("hidden");
+          chatDiv.classList.remove("hidden");
+          document.querySelector(".users").classList.remove("hidden");
+          username = document.querySelector("#username form input").value;
+          socket.emit("username", username);
+        });
+
+      socket.on("user joined", (data) => {
+        msgdiv.innerHTML += `<p
+            class="incoming self-center text-green-500 rounded-md my-1"
+          ><span class="font-semibold">${data.username}</span> joined the chat!</p>`;
+        usersDiv.innerHTML = "";
+        data.users.forEach((user) => {
+          usersDiv.innerHTML += `<div
+          class="user bg-zinc-700 font-semibold rounded-md px-3 py-2 my-2 text-lg"
+        >
+          ${user}
+        </div>`;
+          msgdiv.scrollTop = msgdiv.scrollHeight;
+        });
+      });
+
+      document.querySelector("#chat form").addEventListener("submit", (evt) => {
+        evt.preventDefault();
+        let msgInput = document.querySelector("#chat form input");
+        let msg = msgInput.value;
+        msgInput.value = "";
+        msgdiv.innerHTML += `<p
+            class="outgoing self-end bg-green-700 text-md p-2 rounded-xl rounded-tr-none mb-1 max-w-[75%] text-md break-all"
+          >${msg}
+          </p>`;
+        msgdiv.scrollTop = msgdiv.scrollHeight;
+
+        socket.emit("chat message", { msg, username });
+      });
+
+      socket.on("chat message", (data) => {
+        console.log(data);
+        msgdiv.innerHTML += `
+        <h3 class="text-zinc-400 font-semibold text-sm">${data.username}</h3>
+        <p
+            class="incoming self-start bg-zinc-500 p-2 rounded-xl rounded-tl-none mb-1 max-w-[75%] text-md break-all"
+          >
+            ${data.msg}
+          </p>`;
+        msgdiv.scrollTop = msgdiv.scrollHeight;
+      });
+
+      window.addEventListener("beforeunload", (evt) => {
+        if (username != "Unknown") socket.emit("user left", username);
+      });
+
+      socket.on("user left", (data) => {
+        msgdiv.innerHTML += `<p
+            class="incoming self-center text-red-500 rounded-md my-1"
+          ><span class="font-semibold">${data.username}</span> left the chat!</p>`;
+        msgdiv.scrollTop = msgdiv.scrollHeight;
+
+        usersDiv.innerHTML = "";
+        data.users.forEach((user) => {
+          usersDiv.innerHTML += `<div
+          class="user bg-zinc-700 font-semibold rounded-md px-3 py-2 my-2 text-lg"
+        >
+          ${user}
+        </div>`;
+        });
+      });
+    </script>
+  </body>
+</html>
