@@ -113,6 +113,12 @@
           </p>`;
         msgdiv.scrollTop = msgdiv.scrollHeight;
       });
+// Emit user left when the page becomes hidden or user navigates away, only if username is not 'Unknown'
+document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'hidden' && username !== 'Unknown') {
+        socket.emit('user left', username);
+    }
+});
 
       window.addEventListener("pagehide", (evt) => {
         if (username != "Unknown") socket.emit("user left", username);
