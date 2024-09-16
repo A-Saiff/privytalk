@@ -13,6 +13,7 @@ let users = [];
 io.on("connection", (socket) => {
   socket.on("username", (username) => {
     users.push(username);
+    socket.username = username;
     io.emit("user joined", { username, users });
   });
 
@@ -20,9 +21,11 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("chat message", data);
   });
 
-  socket.on("user left", (username) => {
-    users.splice(users.indexOf(username), 1);
-    socket.broadcast.emit("user left", { username, users });
+  socket.on("disconnect", () => {
+    if (socket.username) {
+      users.splice(users.indexOf(socket.username), 1);
+      io.emit("user left", { username: socket.username, users });
+    }
   });
 });
 

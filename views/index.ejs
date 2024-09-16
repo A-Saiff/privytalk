@@ -114,10 +114,6 @@
         msgdiv.scrollTop = msgdiv.scrollHeight;
       });
 
-      window.addEventListener("beforeunload", (evt) => {
-        if (username != "Unknown") socket.emit("user left", username);
-      });
-
       socket.on("user left", (data) => {
         msgdiv.innerHTML += `<p
             class="incoming self-center text-red-500 rounded-md my-1"
