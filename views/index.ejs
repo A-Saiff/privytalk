@@ -13,23 +13,39 @@
   </head>
   <body>
     <div
-      class="flex min-h-screen bg-zinc-800 text-white items-center justify-center p-5 flex-col gap-2"
+      id="username"
+      class="h-screen w-full bg-zinc-800 flex justify-center items-center p-5"
     >
-      <div id="username">
-        <h3 class="my-3 text-center font-semibold text-lg">Enter your name</h3>
-        <form>
+      <div
+        class="rounded-xl p-5 bg-gradient-to-tr from-zinc-800 via-zinc-700 to-zinc-800 text-white shadow-sm shadow-slate-300"
+      >
+        <h3 class="font-bold text-green-400 text-3xl my-5 text-center">
+          Welcome to PrivyTalk
+        </h3>
+        <p class="text-zinc-400 text-center">
+          Join the chat and start connecting with others!
+        </p>
+        <form class="my-5 flex flex-col gap-3">
           <input
             type="text"
-            class="rounded-md outline-none bg-transparent border-2 border-zinc-600 px-3 py-2"
-            placeholder="Enter your name here"
             required
+            class="px-3 py-3 rounded-xl bg-transparent border-2 border-zinc-400 outline-green-500"
+            placeholder="Enter your name"
           />
-          <button class="rounded-md bg-blue-500 px-3 py-2">Enter</button>
+          <button
+            class="bg-gradient-to-br from-green-900 via-green-700 to-green-500 hover:opacity-75 rounded-xl py-3"
+          >
+            Join chat
+          </button>
         </form>
       </div>
+    </div>
+    <div
+      id="chat"
+      class="flex hidden min-h-screen bg-zinc-800 text-white items-center justify-center p-5 flex-col gap-2"
+    >
       <div
-        id="chat"
-        class="h-[80vh] border-2 border-zinc-600 rounded-md lg:w-1/2 sm:w-3/4 w-full flex flex-col justify-between hidden"
+        class="h-[80vh] border-2 border-zinc-600 rounded-md lg:w-1/2 sm:w-3/4 w-full flex flex-col justify-between"
       >
         <div class="messages overflow-auto p-5 flex flex-col w-full"></div>
         <form
@@ -62,6 +78,12 @@
       const msgdiv = document.querySelector(".messages");
       const usersDiv = document.querySelector(".usersMain");
       let username = "Unknown";
+
+      document.addEventListener("DOMContentLoaded", (ev) => {
+        document.querySelector("#username form input").value =
+          localStorage.getItem("username");
+      });
+
       document
         .querySelector("#username form")
         .addEventListener("submit", (evt) => {
@@ -70,6 +92,7 @@
           chatDiv.classList.remove("hidden");
           document.querySelector(".users").classList.remove("hidden");
           username = document.querySelector("#username form input").value;
+          localStorage.setItem("username", username);
           socket.emit("username", username);
         });
 
