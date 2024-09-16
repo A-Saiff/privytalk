@@ -102,6 +102,17 @@
         socket.emit("chat message", { msg, username });
       });
 
+      let tid;
+      document.addEventListener("visibilitychange", (evt) => {
+        if (document.hidden) {
+          tid = setTimeout(() => {
+            window.location.reload();
+          }, 15000);
+        } else {
+          clearTimeout(tid);
+        }
+      });
+
       socket.on("chat message", (data) => {
         console.log(data);
         msgdiv.innerHTML += `
