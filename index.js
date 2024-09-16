@@ -1,12 +1,14 @@
 const express = require("express");
 const socketio = require("socket.io");
 const http = require("http");
+const path = require("path")
 
 const app = express();
 const server = http.createServer(app);
 const io = new socketio.Server(server);
 
 app.set("view engine", "ejs");
+app.set('views', path.join(__dirname, 'views'));
 
 let users = [];
 
