@@ -21,7 +21,7 @@ PrivyTalk is a real-time group chat web app that allows users to join live conve
 1. Clone the repository:
 
 ```
-git clone https://github.com/yourusername/privytalk.git
+git clone https://github.com/a-saiff/privytalk.git
 ```
 
 2. Navigate into the project directory:
