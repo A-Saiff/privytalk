@@ -4,9 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PrivyTalk</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       .messages::-webkit-scrollbar {
+        display: none;
+      }
+      .users::-webkit-scrollbar {
         display: none;
       }
     </style>
@@ -42,32 +49,33 @@
     </div>
     <div
       id="chat"
-      class="flex hidden min-h-screen bg-zinc-800 text-white items-center justify-center p-5 flex-col gap-2"
+      class="flex h-[100dvh] bg-zinc-800 text-white flex-col gap-2 md:flex-row md:justify-center md:items-center hidden"
     >
       <div
-        class="h-[80vh] border-2 border-zinc-600 rounded-md lg:w-1/2 sm:w-3/4 w-full flex flex-col justify-between"
+        class="users h-[25%] bg-zinc-700 rounded-md overflow-y-auto md:h-[75%] md:w-1/4"
       >
-        <div class="messages overflow-auto p-5 flex flex-col w-full"></div>
-        <form
-          action=""
-          class="msgform border-2 border-zinc-600 rounded-md px-2 py-1 flex gap-2"
-        >
+        <h3 class="text-center text-sky-400 text-lg md:my-2">Online Users</h3>
+        <div class="usersMain px-3"></div>
+      </div>
+      <div
+        class="h-[75%] bg-zinc-700 flex flex-col justify-between rounded-md overflow-hidden md:w-1/2"
+      >
+        <div
+          class="messages overflow-auto px-3 py-2 bg-zinc-600 flex-1 flex flex-col"
+        ></div>
+        <form class="msgform px-3 py-2 flex gap-2">
           <input
             type="text"
             placeholder="Enter your message..."
             class="bg-transparent outline-none flex-1"
             required
           />
-          <button class="px-3 py-2 rounded-md bg-green-500 text-black">
-            Send
+          <button
+            class="rounded-full bg-amber-400 px-3 py-2 text-black flex justify-center items-center"
+          >
+            <i class="ri-send-plane-2-fill text-xl"></i>
           </button>
         </form>
-      </div>
-      <div
-        class="users p-2 border-2 border-zinc-600 lg:h-[80%] lg:w-1/4 w-full sm:w-3/4 lg:absolute left-0 rounded-md overflow-y-auto hidden"
-      >
-        <h3 class="text-center text-green-500 text-lg my-2">Online Users</h3>
-        <div class="usersMain"></div>
       </div>
     </div>
     <script src="/socket.io/socket.io.js"></script>
@@ -97,16 +105,16 @@
         });
 
       socket.on("user joined", (data) => {
-        msgdiv.innerHTML += `<p
-            class="incoming self-center text-green-500 rounded-md my-1"
-          ><span class="font-semibold">${data.username}</span> joined the chat!</p>`;
+        msgdiv.innerHTML += `
+        <div class="joined self-center text-green-500 my-1 tracking-tight">
+            <span class="font-bold">${data.username}</span> joined the chat!
+        </div>
+        `;
         usersDiv.innerHTML = "";
         data.users.forEach((user) => {
-          usersDiv.innerHTML += `<div
-          class="user bg-zinc-700 font-semibold rounded-md px-3 py-2 my-2 text-lg"
-        >
-          ${user}
-        </div>`;
+          usersDiv.innerHTML += `
+          <div class="bg-gray-500 rounded-3xl p-2 my-2">${user}</div>
+        `;
           msgdiv.scrollTop = msgdiv.scrollHeight;
         });
       });
@@ -116,10 +124,13 @@
         let msgInput = document.querySelector("#chat form input");
         let msg = msgInput.value;
         msgInput.value = "";
-        msgdiv.innerHTML += `<p
-            class="outgoing self-end bg-green-700 text-md p-2 rounded-xl rounded-tr-none mb-1 max-w-[75%] text-md break-all"
-          >${msg}
-          </p>`;
+        msgdiv.innerHTML += `
+        <div
+            class="outgoing self-end max-w-[75%] bg-emerald-500 rounded-3xl rounded-tr-none p-2 mb-1"
+          >
+            <p class="break-words">${msg}</p>
+          </div>
+        `;
         msgdiv.scrollTop = msgdiv.scrollHeight;
 
         socket.emit("chat message", { msg, username });
@@ -139,28 +150,29 @@
       socket.on("chat message", (data) => {
         console.log(data);
         msgdiv.innerHTML += `
-        <h3 class="text-zinc-400 font-semibold text-sm">${data.username}</h3>
-        <p
-            class="incoming self-start bg-zinc-500 p-2 rounded-xl rounded-tl-none mb-1 max-w-[75%] text-md break-all"
-          >
-            ${data.msg}
-          </p>`;
+        <div class="incoming self-start max-w-[75%] mb-2">
+            <h3 class="text-gray-300 font-semibold text-sm">${data.username}</h3>
+            <p
+              class="bg-zinc-400 p-2 rounded-3xl rounded-tl-none break-words w-fit"
+            >${data.msg}</p>
+          </div>
+        `;
         msgdiv.scrollTop = msgdiv.scrollHeight;
       });
 
       socket.on("user left", (data) => {
-        msgdiv.innerHTML += `<p
-            class="incoming self-center text-red-500 rounded-md my-1"
-          ><span class="font-semibold">${data.username}</span> left the chat!</p>`;
+        msgdiv.innerHTML += `
+          <div class="left self-center text-rose-400 my-1 tracking-tight">
+            <span class="font-bold">${data.username}</span> left the chat!
+          </div>
+        `;
         msgdiv.scrollTop = msgdiv.scrollHeight;
 
         usersDiv.innerHTML = "";
         data.users.forEach((user) => {
-          usersDiv.innerHTML += `<div
-          class="user bg-zinc-700 font-semibold rounded-md px-3 py-2 my-2 text-lg"
-        >
-          ${user}
-        </div>`;
+          usersDiv.innerHTML += `
+          <div class="bg-gray-500 rounded-3xl p-2 my-2">${user}</div>
+        `;
         });
       });
     </script>
