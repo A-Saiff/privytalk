@@ -1,14 +1,13 @@
 const express = require("express");
 const socketio = require("socket.io");
 const http = require("http");
-const path = require("path")
+const path = require("path");
 
 const app = express();
 const server = http.createServer(app);
 const io = new socketio.Server(server);
 
-app.set("view engine", "ejs");
-app.set('views', path.join(__dirname, 'views'));
+app.use(express.static("public"));
 
 let users = [];
 
@@ -32,7 +31,7 @@ io.on("connection", (socket) => {
 });
 
 app.get("/", (req, res) => {
-  res.render("index");
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 server.listen(3000, () => {

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/output.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <title>PrivyTalk</title>
+  </head>
+  <body>
+    <div
+      id="username"
+      class="h-dvh w-full bg-zinc-800 flex justify-center items-center p-5"
+    >
+      <div
+        class="rounded-xl p-5 bg-gradient-to-tr from-zinc-800 via-zinc-700 to-zinc-800 text-white shadow-sm shadow-slate-300"
+      >
+        <h3 class="font-bold text-green-400 text-3xl my-5 text-center">
+          Welcome to PrivyTalk
+        </h3>
+        <p class="text-zinc-400 text-center">
+          Join the chat and start connecting with others!
+        </p>
+        <form class="my-5 flex flex-col gap-3">
+          <input
+            type="text"
+            required
+            class="px-3 py-3 rounded-xl bg-transparent border-2 border-zinc-400 outline-green-500"
+            placeholder="Enter your name"
+          />
+          <button
+            class="bg-gradient-to-br from-green-900 via-green-700 to-green-500 hover:opacity-75 rounded-xl py-3"
+          >
+            Join chat
+          </button>
+        </form>
+      </div>
+    </div>
+    <div
+      id="chat"
+      class="flex h-dvh bg-zinc-800 text-white flex-col gap-2 md:flex-row md:justify-center md:items-center hidden"
+    >
+      <div
+        class="users h-[25%] bg-zinc-700 rounded-md overflow-y-auto md:h-[75%] md:w-1/4"
+      >
+        <h3 class="text-center text-sky-400 text-lg md:my-2">Online Users</h3>
+        <div class="usersMain px-3"></div>
+      </div>
+      <div
+        class="h-[75%] bg-zinc-700 flex flex-col justify-between rounded-md overflow-hidden md:w-1/2"
+      >
+        <div
+          class="messages overflow-auto px-3 py-2 bg-zinc-600 flex-1 flex flex-col"
+        ></div>
+        <form class="msgform px-3 py-2 flex gap-2">
+          <input
+            type="text"
+            placeholder="Enter your message..."
+            class="bg-transparent outline-none flex-1"
+            required
+          />
+          <button
+            class="rounded-full bg-amber-400 px-3 py-2 text-black flex justify-center items-center"
+          >
+            <i class="ri-send-plane-2-fill text-xl"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/script.js"></script>
+  </body>
+</html>
